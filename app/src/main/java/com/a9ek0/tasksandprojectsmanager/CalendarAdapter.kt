@@ -5,16 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class CalendarAdapter(
     private val context: Context,
     private val calendarDays: List<CalendarDay>,
-    private val onDayClickListener: OnDayClickListener
+    public val onDayClickListener: OnDayClickListener
 ) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
-    private var selectedDay: CalendarDay? = null
+    public var selectedPosition: Int = -1
 
     interface OnDayClickListener {
         fun onDayClick(day: CalendarDay)
@@ -29,21 +30,31 @@ class CalendarAdapter(
         val day = calendarDays[position]
         holder.dayNumber.text = day.dayNumber.toString()
         holder.dayName.text = day.dayName
-        holder.dayIcon.visibility = if (day == selectedDay) View.VISIBLE else View.GONE
+        holder.dayIcon.visibility = if (position == selectedPosition) View.VISIBLE else View.GONE
+
+        val scale = if (position == selectedPosition) 1f else 1f
+        holder.dayContainer.animate()
+            .scaleX(scale)
+            .scaleY(scale)
+            .translationY(if (position == selectedPosition) -20f else 20f)
+            .setDuration(200)
+            .start()
+
         holder.itemView.setOnClickListener {
-            selectedDay = day
+            val previousSelected = selectedPosition
+            selectedPosition = holder.adapterPosition
+            notifyItemChanged(previousSelected)
+            notifyItemChanged(selectedPosition)
             onDayClickListener.onDayClick(day)
-            notifyDataSetChanged()
         }
     }
-
-
 
     override fun getItemCount(): Int {
         return calendarDays.size
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val dayContainer: LinearLayout = itemView.findViewById(R.id.day_container)
         val dayNumber: TextView = itemView.findViewById(R.id.day_number)
         val dayName: TextView = itemView.findViewById(R.id.day_name)
         val dayIcon: ImageView = itemView.findViewById(R.id.day_icon)

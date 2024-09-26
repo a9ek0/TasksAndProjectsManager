@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -56,41 +55,18 @@
     </LinearLayout>
 
     <!-- Календарь -->
-    <HorizontalScrollView
-        android:id="@+id/calendar_scroll"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/calendar_recycler_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="24dp"
-        android:paddingBottom="24dp"
+        android:layout_height="120dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
         android:scrollbars="none"
-        app:layout_constraintTop_toBottomOf="@id/top_bar">
+        app:layout_constraintTop_toBottomOf="@id/top_bar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
-        <LinearLayout
-            android:id="@+id/calendar_view"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:paddingStart="-10dp"
-            android:paddingEnd="24dp">
-
-            <!-- Дни недели -->
-            <include layout="@layout/calendar_day_item" />
-
-            <include layout="@layout/calendar_day_item" />
-
-            <include layout="@layout/calendar_day_item" />
-
-            <include layout="@layout/calendar_day_item" />
-
-            <include layout="@layout/calendar_day_item" />
-
-            <include layout="@layout/calendar_day_item" />
-
-            <include layout="@layout/calendar_day_item" />
-
-        </LinearLayout>
-    </HorizontalScrollView>
-
+    <!-- Временные метки -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -98,7 +74,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/calendar_scroll">
+        app:layout_constraintTop_toBottomOf="@id/calendar_recycler_view">
 
         <RelativeLayout
             android:id="@+id/timeline_container"
@@ -128,7 +104,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="00:00"
+                        android:text="12 pm"
                         android:textSize="14sp"
                         android:textColor="@color/black"
                         android:layout_marginStart="24dp"
@@ -139,172 +115,13 @@
                     <!-- Горизонтальная линия от временной метки -->
                     <View
                         android:layout_width="wrap_content"
-                    android:layout_height="2dp"
-                    android:background="#000000"
-                    android:layout_marginStart="70dp"
-                    android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="01:00"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical|start" />
-
-                    <View
-                        android:layout_width="wrap_content"
                         android:layout_height="2dp"
                         android:background="#000000"
                         android:layout_marginStart="70dp"
                         android:layout_centerVertical="true" />
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="02:00"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical|start" />
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:background="#000000"
-                        android:layout_marginStart="70dp"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="03:00"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical|start" />
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:background="#000000"
-                        android:layout_marginStart="70dp"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="04:00"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical|start" />
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:background="#000000"
-                        android:layout_marginStart="70dp"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="05:00"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical|start" />
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:background="#000000"
-                        android:layout_marginStart="70dp"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="06:00"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical|start" />
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:background="#000000"
-                        android:layout_marginStart="70dp"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="80dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="07:00"
-                        android:textSize="14sp"
-                        android:textColor="@color/black"
-                        android:layout_marginStart="24dp"
-                        android:layout_marginEnd="24dp"
-                        android:layout_centerVertical="true"
-                        android:gravity="center_vertical|start" />
-
-                    <View
-                        android:layout_width="wrap_content"
-                        android:layout_height="2dp"
-                        android:background="#000000"
-                        android:layout_marginStart="70dp"
-                        android:layout_centerVertical="true" />
-                </RelativeLayout>
+                <!-- Добавьте остальные временные метки аналогично -->
 
             </LinearLayout>
 
@@ -312,7 +129,6 @@
 
         </RelativeLayout>
     </ScrollView>
-
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

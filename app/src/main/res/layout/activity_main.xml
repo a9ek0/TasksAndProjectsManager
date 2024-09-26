@@ -30,7 +30,7 @@
             android:id="@+id/backIcon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@android:drawable/ic_delete"
+            android:src="@drawable/arrow_back"
             app:tint="@color/icon_color" />
 
         <!-- Заголовок -->
@@ -51,7 +51,7 @@
             android:id="@+id/addIcon"
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:src="@android:drawable/ic_menu_add"
+            android:src="@drawable/add"
             app:tint="@color/icon_color" />
     </LinearLayout>
 
@@ -91,7 +91,6 @@
         </LinearLayout>
     </HorizontalScrollView>
 
-    <!-- Временная шкала с событиями -->
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -121,188 +120,191 @@
                 android:layout_height="1440dp"
                 android:orientation="vertical">
 
-                <!-- Пример временной метки -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="00:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                <!-- Пример временной метки с горизонтальной линией -->
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
 
-                <!-- Пример временной метки -->
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="00:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <!-- Горизонтальная линия от временной метки -->
+                    <View
+                        android:layout_width="wrap_content"
+                    android:layout_height="2dp"
+                    android:background="#000000"
+                    android:layout_marginStart="70dp"
+                    android:layout_centerVertical="true" />
+                </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="01:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:background="#000000"
+                        android:layout_marginStart="70dp"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="02:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:background="#000000"
+                        android:layout_marginStart="70dp"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="03:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:background="#000000"
+                        android:layout_marginStart="70dp"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="04:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:background="#000000"
+                        android:layout_marginStart="70dp"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="05:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:text="01:00"
-                    android:textSize="14sp"
-                    android:textColor="@color/black"
-                    android:layout_marginStart="24dp"
-                    android:layout_marginEnd="24dp"
-                    android:gravity="center_vertical|start" />
-                <!-- Добавьте больше временных меток по аналогии -->
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:background="#000000"
+                        android:layout_marginStart="70dp"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="06:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:background="#000000"
+                        android:layout_marginStart="70dp"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="80dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="07:00"
+                        android:textSize="14sp"
+                        android:textColor="@color/black"
+                        android:layout_marginStart="24dp"
+                        android:layout_marginEnd="24dp"
+                        android:layout_centerVertical="true"
+                        android:gravity="center_vertical|start" />
+
+                    <View
+                        android:layout_width="wrap_content"
+                        android:layout_height="2dp"
+                        android:background="#000000"
+                        android:layout_marginStart="70dp"
+                        android:layout_centerVertical="true" />
+                </RelativeLayout>
 
             </LinearLayout>
 
@@ -310,6 +312,7 @@
 
         </RelativeLayout>
     </ScrollView>
+
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline2"

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="72dp"
+    android:layout_height="90dp"
+
+    android:orientation="vertical"
+    android:gravity="center"
+
+    android:layout_marginStart ="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginTop   ="8dp"
+    android:layout_marginEnd   ="8dp"
+
+    android:elevation="4dp"
+
+    android:padding="8dp"
+
+    android:background="@drawable/calendar_day_background">
+
+    <TextView
+        android:id="@+id/day_number"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:text="21"
+        android:textColor="@android:color/black"
+        android:textSize="27sp"
+        android:gravity="center" />
+
+    <TextView
+        android:id="@+id/day_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Mon"
+        android:textColor="@android:color/black"
+        android:textSize="18sp"
+        android:layout_marginTop="-10dp" />
+</LinearLayout>

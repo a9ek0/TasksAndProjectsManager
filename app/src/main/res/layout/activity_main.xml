@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".MainActivity">
+
+    <!-- Верхняя панель с иконками -->
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:elevation="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="24dp"
+        android:paddingTop="24dp"
+        android:paddingEnd="24dp"
+        android:paddingBottom="24dp"
+        android:backgroundTint="@color/white"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <!-- Иконка с календарем -->
+        <ImageView
+            android:id="@+id/backIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_delete"
+            app:tint="@color/icon_color" />
+
+        <!-- Заголовок -->
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_weight="1"
+            android:text="Calendar"
+            android:textAlignment="center"
+            android:textColor="@color/black"
+            android:textSize="29sp"
+            android:textStyle="bold" />
+
+        <!-- Иконка добавления -->
+        <ImageView
+            android:id="@+id/addIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@android:drawable/ic_menu_add"
+            app:tint="@color/icon_color" />
+    </LinearLayout>
+
+    <!-- Календарь -->
+    <HorizontalScrollView
+        android:id="@+id/calendar_scroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp"
+        android:paddingBottom="24dp"
+        android:scrollbars="none"
+        app:layout_constraintTop_toBottomOf="@id/top_bar">
+
+        <LinearLayout
+            android:id="@+id/calendar_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingStart="-10dp"
+            android:paddingEnd="24dp">
+
+            <!-- Дни недели -->
+            <include layout="@layout/calendar_day_item" />
+
+            <include layout="@layout/calendar_day_item" />
+
+            <include layout="@layout/calendar_day_item" />
+
+            <include layout="@layout/calendar_day_item" />
+
+            <include layout="@layout/calendar_day_item" />
+
+            <include layout="@layout/calendar_day_item" />
+
+            <include layout="@layout/calendar_day_item" />
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <!-- Временная шкала с событиями -->
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:clipToPadding="false"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/calendar_scroll">
+
+        <RelativeLayout
+            android:id="@+id/timeline_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="16dp">
+
+            <!-- Вертикальная линия времени -->
+            <View
+                android:layout_width="2dp"
+                android:layout_height="1440dp"
+                android:layout_marginStart="70dp"
+                android:background="#E0E0E0" />
+
+            <!-- Временные метки и горизонтальные линии -->
+            <LinearLayout
+                android:id="@+id/hours_container"
+                android:layout_width="match_parent"
+                android:layout_height="1440dp"
+                android:orientation="vertical">
+
+                <!-- Пример временной метки -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="00:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <!-- Пример временной метки -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:text="01:00"
+                    android:textSize="14sp"
+                    android:textColor="@color/black"
+                    android:layout_marginStart="24dp"
+                    android:layout_marginEnd="24dp"
+                    android:gravity="center_vertical|start" />
+                <!-- Добавьте больше временных меток по аналогии -->
+
+            </LinearLayout>
+
+            <!-- Здесь будут динамически добавляться задачи -->
+
+        </RelativeLayout>
+    </ScrollView>
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp" />
+</androidx.constraintlayout.widget.ConstraintLayout>

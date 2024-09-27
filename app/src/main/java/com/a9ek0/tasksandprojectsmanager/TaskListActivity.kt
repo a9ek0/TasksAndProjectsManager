@@ -13,6 +13,10 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.LinearSmoothScroller
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.Calendar
 
 class TaskListActivity : AppCompatActivity() {
@@ -24,16 +28,25 @@ class TaskListActivity : AppCompatActivity() {
     private var selectedDate: String = ""
     private lateinit var calendarDays: List<CalendarDay>
 
+    private lateinit var db: AppDatabase
+    private lateinit var taskDao: TaskDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar()?.hide();
+        }
         setContentView(R.layout.activity_task_list)
+
+        db = AppDatabase.getDatabase(this)
+        taskDao = db.taskDao()
 
         setupCalendarView()
         setupHourView()
 
         val today = Calendar.getInstance()
         selectedDate = "${today.get(Calendar.DAY_OF_MONTH)}-${today.get(Calendar.MONTH) + 1}-${today.get(Calendar.YEAR)}"
-        hourAdapter.setCurrentDate(selectedDate)
+        loadTasksForSelectedDate()
 
         val addIcon: ImageView = findViewById(R.id.addIcon)
         addIcon.setOnClickListener {
@@ -50,9 +63,41 @@ class TaskListActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
-
     }
 
+    private fun clearDatabase() {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.clearDatabase()
+        }
+    }
+
+    private fun loadTasksForSelectedDate() {
+        CoroutineScope(Dispatchers.IO).launch {
+            val tasks = taskDao.getTasksByDateAndTime(selectedDate)
+            withContext(Dispatchers.Main) {
+                hourAdapter.clearTasks()
+                updateUI(tasks)
+            }
+        }
+    }
+
+    private fun updateUI(tasks: List<Task>) {
+        hourAdapter.setCurrentDate(selectedDate)
+        tasks.forEach { task ->
+            val hourIndex = task.time.split(":")[0].toInt()
+            hourAdapter.addTaskToHour(hourIndex, task)
+        }
+    }
+
+    private fun addTaskToDatabase(task: Task) {
+        CoroutineScope(Dispatchers.IO).launch {
+            taskDao.insert(task)
+            val tasks = taskDao.getTasksByDateAndTime(task.date)
+            withContext(Dispatchers.Main) {
+                updateUI(tasks)
+            }
+        }
+    }
 
     private fun showAddTaskDialog() {
         val builder = AlertDialog.Builder(this)
@@ -74,7 +119,7 @@ class TaskListActivity : AppCompatActivity() {
         builder.setPositiveButton("Add") { dialog, which ->
             val title = titleInput.text.toString()
             val description = descriptionInput.text.toString()
-            val task = Task(title, description, selectedDate)
+            val task = Task(title = title, description = description, date = selectedDate, time = "")
             selectHourForTask(task)
         }
         builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
@@ -87,9 +132,9 @@ class TaskListActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Select Hour")
         builder.setItems(hours) { dialog, which ->
-            if (!hourAdapter.addTaskToHour(which, task)) {
-                Toast.makeText(this, "Maximum tasks reached for this hour", Toast.LENGTH_SHORT).show()
-            }
+            val selectedHour = hours[which]
+            val updatedTask = task.copy(time = selectedHour)
+            addTaskToDatabase(updatedTask)
         }
         builder.show()
     }
@@ -126,19 +171,16 @@ class TaskListActivity : AppCompatActivity() {
         calendarAdapter = CalendarAdapter(this, calendarDays, object : CalendarAdapter.OnDayClickListener {
             override fun onDayClick(day: CalendarDay) {
                 selectedDate = "${day.dayNumber}-${Calendar.getInstance().get(Calendar.MONTH) + 1}-${Calendar.getInstance().get(Calendar.YEAR)}"
-                hourAdapter.setCurrentDate(selectedDate)
-            //    Toast.makeText(this@TaskListActivity, "Selected day: ${day.dayNumber}", Toast.LENGTH_SHORT).show()
+                loadTasksForSelectedDate()
             }
         })
 
-        // Automatically select today's date
         val today = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
         val todayIndex = calendarDays.indexOfFirst { it.dayNumber == today }
         if (todayIndex != -1) {
             calendarAdapter.selectedPosition = todayIndex
             calendarAdapter.notifyItemChanged(todayIndex)
 
-            // Center the selected day
             calendarRecyclerView.post {
                 val smoothScroller = object : LinearSmoothScroller(this@TaskListActivity) {
                     override fun getHorizontalSnapPreference(): Int {
@@ -158,7 +200,6 @@ class TaskListActivity : AppCompatActivity() {
 
         calendarRecyclerView.adapter = calendarAdapter
     }
-
     private fun setupHourView() {
         hourRecyclerView = findViewById(R.id.hour_recycler_view)
         val layoutManager = LinearLayoutManager(this)

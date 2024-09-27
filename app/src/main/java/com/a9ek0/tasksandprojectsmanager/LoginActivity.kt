@@ -11,6 +11,9 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar()?.hide();
+        }
         setContentView(R.layout.activity_login)
 
         val usernameEditText: EditText = findViewById(R.id.username)

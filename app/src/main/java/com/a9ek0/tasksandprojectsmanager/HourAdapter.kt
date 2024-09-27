@@ -12,6 +12,7 @@ class HourAdapter(private val hours: List<String>) : RecyclerView.Adapter<HourAd
     private val tasks: MutableList<MutableList<Task>> = MutableList(hours.size) { mutableListOf() }
     private val maxTasksPerHour = 5
     private var currentDate: String = ""
+    private val tasksByHour = mutableMapOf<Int, MutableList<Task>>()
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val hourText: TextView = view.findViewById(R.id.hour_text)
@@ -29,7 +30,7 @@ class HourAdapter(private val hours: List<String>) : RecyclerView.Adapter<HourAd
         for (task in tasks[position].filter { it.date == currentDate }) {
             val taskView = TextView(holder.taskContainer.context)
             taskView.text = "${task.title}: ${task.description}"
-            taskView.setTextColor(holder.taskContainer.context.resources.getColor(R.color.black)) // Установите цвет текста
+            taskView.setTextColor(holder.taskContainer.context.resources.getColor(R.color.black))
             holder.taskContainer.addView(taskView)
         }
     }
@@ -51,6 +52,12 @@ class HourAdapter(private val hours: List<String>) : RecyclerView.Adapter<HourAd
 
     fun setCurrentDate(date: String) {
         currentDate = date
+        notifyDataSetChanged()
+    }
+
+    fun clearTasks() {
+        tasks.forEach { it.clear() } // Clear each list of tasks
+        tasksByHour.clear()
         notifyDataSetChanged()
     }
 }

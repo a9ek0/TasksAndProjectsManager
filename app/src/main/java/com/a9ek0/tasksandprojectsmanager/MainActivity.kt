@@ -7,13 +7,22 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var taskDao: TaskDao
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (getSupportActionBar() != null) {
+            getSupportActionBar()?.hide();
+        }
         setContentView(R.layout.activity_main)
 
         val calendarIcon: ImageView = findViewById(R.id.calendar_icon)
@@ -30,6 +39,9 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
+
+        taskDao = AppDatabase.getDatabase(this).taskDao()
+        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
         val dateTextView: TextView = findViewById(R.id.date)
         val currentDate = SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault()).format(Date())
         dateTextView.text = currentDate
@@ -43,6 +55,15 @@ class MainActivity : AppCompatActivity() {
         val progressPercentage = calculateProgress(tasksCount, getCompletedTasksCount())
         progressBar.progress = progressPercentage
         progressTextView.text = "$progressPercentage%"
+
+        lifecycleScope.launch {
+            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+            val count = withContext(Dispatchers.IO) {
+                taskDao.countTasksByDate(today)
+            }
+            val tasksCountTextView: TextView = findViewById(R.id.tasks_count)
+            tasksCountTextView.text = count.toString()
+        }
     }
 
     private fun getTasksCount(): Int {

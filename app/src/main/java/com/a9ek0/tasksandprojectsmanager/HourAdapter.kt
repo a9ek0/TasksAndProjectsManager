@@ -29,6 +29,7 @@ class HourAdapter(private val hours: List<String>) : RecyclerView.Adapter<HourAd
         for (task in tasks[position].filter { it.date == currentDate }) {
             val taskView = TextView(holder.taskContainer.context)
             taskView.text = "${task.title}: ${task.description}"
+            taskView.setTextColor(holder.taskContainer.context.resources.getColor(R.color.black)) // Установите цвет текста
             holder.taskContainer.addView(taskView)
         }
     }

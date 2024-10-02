@@ -44,6 +44,10 @@ TasksAndProjectsManager/
 │   │   └── test/          # Тесты
 │   └── build.gradle       # Конфигурация сборки модуля
 │
+├── docs/                  # Документация проекта
+│   ├── mockups/           # Макеты экранов приложения
+│   ├── src.md             # Документация проекта
+│
 ├── gradle/
 ├── .gitattributes
 ├── .gitignore
@@ -53,7 +57,7 @@ TasksAndProjectsManager/
 ├── gradlew.bat
 ├── local.properties
 ├── settings.gradle.kts
-└── README.md              # Документация проекта
+└── README.md              
 ```
 
 ### Требования
@@ -65,6 +69,11 @@ TasksAndProjectsManager/
 ### Контрибуции
 
 Приветствуются любые предложения по улучшению проекта! Если у вас есть идеи или вы нашли баг, пожалуйста, создайте issue или отправьте pull request.
+
+### Документация
+
+Для получения более подробной информации ознакомьтесь с [документацией](docs/srs.md).
+
 
 ### Лицензия
 

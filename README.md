@@ -46,7 +46,7 @@ TasksAndProjectsManager/
 │
 ├── docs/                  # Документация проекта
 │   ├── mockups/           # Макеты экранов приложения
-│   ├── src.md             # Документация проекта
+│   ├── src.md             # Основная документация проекта
 │
 ├── gradle/
 ├── .gitattributes

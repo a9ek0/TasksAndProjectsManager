@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 class CalendarAdapter(
     private val context: Context,
-    private val calendarDays: List<CalendarDay>,
+    private var calendarDays: List<CalendarDay>,
     public val onDayClickListener: OnDayClickListener
 ) : RecyclerView.Adapter<CalendarAdapter.ViewHolder>() {
 
@@ -51,14 +51,6 @@ class CalendarAdapter(
             notifyItemChanged(previousSelected)
             notifyItemChanged(selectedPosition)
             onDayClickListener.onDayClick(day)
-        }
-
-        holder.itemView.setOnClickListener {
-            val previousSelected = selectedPosition
-            selectedPosition = holder.adapterPosition
-            notifyItemChanged(previousSelected)
-            notifyItemChanged(selectedPosition)
-            onDayClickListener.onDayClick(day)
 
             val layoutManager = (holder.itemView.parent as RecyclerView).layoutManager as LinearLayoutManager
             val smoothScroller = object : LinearSmoothScroller(context) {
@@ -77,10 +69,13 @@ class CalendarAdapter(
         }
     }
 
-
-
     override fun getItemCount(): Int {
         return calendarDays.size
+    }
+
+    fun updateCalendarDays(newCalendarDays: List<CalendarDay>) {
+        calendarDays = newCalendarDays
+        notifyDataSetChanged()
     }
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -90,5 +85,6 @@ class CalendarAdapter(
         val dayName: TextView = itemView.findViewById(R.id.day_name)
         val dayIcon: ImageView = itemView.findViewById(R.id.day_icon)
     }
+
 
 }

@@ -7,57 +7,71 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class HourAdapter(private val hours: List<String>) : RecyclerView.Adapter<HourAdapter.ViewHolder>() {
+class HourAdapter(
+    private val hours: List<String>,
+    private val onTaskLongClickListener: OnTaskLongClickListener,
+    private val projects: Map<Int, Project> // Добавьте карту проектов
+) : RecyclerView.Adapter<HourAdapter.HourViewHolder>() {
 
-    private val tasks: MutableList<MutableList<Task>> = MutableList(hours.size) { mutableListOf() }
-    private val maxTasksPerHour = 5
-    private var currentDate: String = ""
+    interface OnTaskLongClickListener {
+        fun onTaskLongClick(task: Task)
+    }
+
     private val tasksByHour = mutableMapOf<Int, MutableList<Task>>()
+    private var currentDate: String = ""
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val hourText: TextView = view.findViewById(R.id.hour_text)
-        val taskContainer: LinearLayout = view.findViewById(R.id.task_container)
-    }
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HourViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.hour_item, parent, false)
-        return ViewHolder(view)
+        return HourViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.hourText.text = hours[position]
-        holder.taskContainer.removeAllViews()
-        for (task in tasks[position].filter { it.date == currentDate }) {
-            val taskView = TextView(holder.taskContainer.context)
-            taskView.text = "${task.title}: ${task.description}"
-            taskView.setTextColor(holder.taskContainer.context.resources.getColor(R.color.black))
-            holder.taskContainer.addView(taskView)
+    override fun onBindViewHolder(holder: HourViewHolder, position: Int) {
+        val hour = hours[position]
+        val tasks = tasksByHour[position] ?: emptyList()
+        holder.bind(hour, tasks, projects)
+        holder.itemView.setOnLongClickListener {
+            if (tasks.isNotEmpty()) {
+                onTaskLongClickListener.onTaskLongClick(tasks[0]) // Assuming you want to handle the first task
+            }
+            true
         }
     }
 
-    override fun getItemCount() = hours.size
+    override fun getItemCount(): Int = hours.size
 
-    fun getTasksForHour(hourIndex: Int): MutableList<Task> {
-        return tasks[hourIndex]
-    }
-
-    fun addTaskToHour(hourIndex: Int, task: Task): Boolean {
-        if (tasks[hourIndex].size < maxTasksPerHour) {
-            tasks[hourIndex].add(task)
-            notifyItemChanged(hourIndex)
-            return true
+    fun addTaskToHour(hourIndex: Int, task: Task) {
+        for (i in 0 until task.duration) {
+            tasksByHour.getOrPut(hourIndex + i) { mutableListOf() }.add(task)
         }
-        return false
-    }
-
-    fun setCurrentDate(date: String) {
-        currentDate = date
         notifyDataSetChanged()
     }
 
     fun clearTasks() {
-        tasks.forEach { it.clear() } // Clear each list of tasks
         tasksByHour.clear()
         notifyDataSetChanged()
+    }
+
+    fun setCurrentDate(date: String) {
+        currentDate = date
+    }
+
+    class HourViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        private val hourTextView: TextView = itemView.findViewById(R.id.hour_text)
+        private val tasksContainer: LinearLayout = itemView.findViewById(R.id.tasks_container)
+
+        fun bind(hour: String, tasks: List<Task>, projects: Map<Int, Project>) {
+            hourTextView.text = hour
+            tasksContainer.removeAllViews()
+            tasks.forEach { task ->
+                val taskView = LayoutInflater.from(itemView.context).inflate(R.layout.task_item, tasksContainer, false)
+                val titleTextView: TextView = taskView.findViewById(R.id.task_title)
+                val descriptionTextView: TextView = taskView.findViewById(R.id.task_description)
+                val projectTextView: TextView = taskView.findViewById(R.id.task_project)
+                titleTextView.text = task.title
+                descriptionTextView.text = task.description
+                projectTextView.text = projects[task.projectId]?.name ?: "No Project"
+                tasksContainer.addView(taskView)
+            }
+        }
     }
 }

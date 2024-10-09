@@ -1,9 +1,12 @@
 package com.a9ek0.tasksandprojectsmanager
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
+import android.content.ContentValues.TAG
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
@@ -30,6 +33,7 @@ class TaskListActivity : AppCompatActivity() {
 
     private lateinit var db: AppDatabase
     private lateinit var taskDao: TaskDao
+    private lateinit var projectDao: ProjectDao
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +44,7 @@ class TaskListActivity : AppCompatActivity() {
 
         db = AppDatabase.getDatabase(this)
         taskDao = db.taskDao()
+        projectDao = db.projectDao()
 
         setupCalendarView()
         setupHourView()
@@ -63,12 +68,74 @@ class TaskListActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+
+        val datePickerIcon: ImageView = findViewById(R.id.datePickerIcon)
+        datePickerIcon.setOnClickListener {
+            showDatePickerDialog()
+        }
     }
 
-    private fun clearDatabase() {
-        CoroutineScope(Dispatchers.IO).launch {
-            db.clearDatabase()
+
+    private fun setupProjectView() {
+        val addProjectIcon: ImageView = findViewById(R.id.addProjectIcon)
+        addProjectIcon.setOnClickListener {
+            showAddProjectDialog()
         }
+    }
+
+    private fun showAddProjectDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Add Project")
+
+        val layout = LinearLayout(this)
+        layout.orientation = LinearLayout.VERTICAL
+
+        val nameInput = EditText(this)
+        nameInput.hint = "Project Name"
+        layout.addView(nameInput)
+
+        val descriptionInput = EditText(this)
+        descriptionInput.hint = "Project Description"
+        layout.addView(descriptionInput)
+
+        builder.setView(layout)
+
+        builder.setPositiveButton("Add") { dialog, which ->
+            val name = nameInput.text.toString()
+            val description = descriptionInput.text.toString()
+            val project = Project(name = name, description = description)
+            addProjectToDatabase(project)
+        }
+        builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
+
+        builder.show()
+    }
+
+    private fun addProjectToDatabase(project: Project) {
+        CoroutineScope(Dispatchers.IO).launch {
+            projectDao.insert(project)
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@TaskListActivity, "Project added", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+
+
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(this, { _, selectedYear, selectedMonth, selectedDay ->
+            selectedDate = "${selectedDay}-${selectedMonth + 1}-${selectedYear}"
+            Log.d(TAG, selectedDate)
+            loadTasksForSelectedDate()
+            updateCalendarView(selectedDay, selectedMonth, selectedYear)
+        }, year, month, day)
+
+        datePickerDialog.show()
     }
 
     private fun loadTasksForSelectedDate() {
@@ -80,6 +147,80 @@ class TaskListActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun updateCalendarView(selectedDay: Int, selectedMonth: Int, selectedYear: Int) {
+        calendarDays = generateCalendarDays(selectedMonth, selectedYear)
+        calendarAdapter.updateCalendarDays(calendarDays)
+
+        val todayIndex = calendarDays.indexOfFirst { it.dayNumber == selectedDay }
+        if (todayIndex != -1) {
+            calendarAdapter.selectedPosition = todayIndex
+            calendarAdapter.notifyDataSetChanged()
+
+            calendarRecyclerView.post {
+                val smoothScroller = object : LinearSmoothScroller(this@TaskListActivity) {
+                    override fun getHorizontalSnapPreference(): Int {
+                        return SNAP_TO_START
+                    }
+
+                    override fun calculateDtToFit(
+                        viewStart: Int, viewEnd: Int, boxStart: Int, boxEnd: Int, snapPreference: Int
+                    ): Int {
+                        return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2)
+                    }
+                }
+                smoothScroller.targetPosition = todayIndex
+                calendarRecyclerView.layoutManager?.startSmoothScroll(smoothScroller)
+            }
+        }
+    }
+
+    private fun generateCalendarDays(month: Int, year: Int): List<CalendarDay> {
+        val days = mutableListOf<CalendarDay>()
+        val calendar = Calendar.getInstance()
+        calendar.set(year, month, 1)
+
+        val daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH)
+        for (i in 1..daysInMonth) {
+            calendar.set(year, month, i)
+            val dayName = java.text.SimpleDateFormat("EEE").format(calendar.time)
+            days.add(CalendarDay(i, dayName))
+        }
+
+        return days
+    }
+
+    private fun updateCalendarView(selectedDay: Int) {
+        val todayIndex = calendarDays.indexOfFirst { it.dayNumber == selectedDay }
+        if (todayIndex != -1) {
+            calendarAdapter.selectedPosition = todayIndex
+            calendarAdapter.notifyDataSetChanged()
+
+            calendarRecyclerView.post {
+                val smoothScroller = object : LinearSmoothScroller(this@TaskListActivity) {
+                    override fun getHorizontalSnapPreference(): Int {
+                        return SNAP_TO_START
+                    }
+
+                    override fun calculateDtToFit(
+                        viewStart: Int, viewEnd: Int, boxStart: Int, boxEnd: Int, snapPreference: Int
+                    ): Int {
+                        return (boxStart + (boxEnd - boxStart) / 2) - (viewStart + (viewEnd - viewStart) / 2)
+                    }
+                }
+                smoothScroller.targetPosition = todayIndex
+                calendarRecyclerView.layoutManager?.startSmoothScroll(smoothScroller)
+            }
+        }
+    }
+
+    private fun clearDatabase() {
+        CoroutineScope(Dispatchers.IO).launch {
+            db.clearDatabase()
+        }
+    }
+
+
 
     private fun updateUI(tasks: List<Task>) {
         hourAdapter.setCurrentDate(selectedDate)
@@ -94,6 +235,7 @@ class TaskListActivity : AppCompatActivity() {
             taskDao.insert(task)
             val tasks = taskDao.getTasksByDateAndTime(task.date)
             withContext(Dispatchers.Main) {
+                hourAdapter.clearTasks()
                 updateUI(tasks)
             }
         }
@@ -119,7 +261,7 @@ class TaskListActivity : AppCompatActivity() {
         builder.setPositiveButton("Add") { dialog, which ->
             val title = titleInput.text.toString()
             val description = descriptionInput.text.toString()
-            val task = Task(title = title, description = description, date = selectedDate, time = "")
+            val task = Task(title = title, description = description, date = selectedDate, time = "", duration = 1)
             selectHourForTask(task)
         }
         builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
@@ -134,6 +276,18 @@ class TaskListActivity : AppCompatActivity() {
         builder.setItems(hours) { dialog, which ->
             val selectedHour = hours[which]
             val updatedTask = task.copy(time = selectedHour)
+            selectDurationForTask(updatedTask)
+        }
+        builder.show()
+    }
+
+    private fun selectDurationForTask(task: Task) {
+        val durations = (1..24).map { "$it hour(s)" }.toTypedArray()
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Select Duration")
+        builder.setItems(durations) { dialog, which ->
+            val selectedDuration = which + 1
+            val updatedTask = task.copy(duration = selectedDuration)
             addTaskToDatabase(updatedTask)
         }
         builder.show()
@@ -200,6 +354,7 @@ class TaskListActivity : AppCompatActivity() {
 
         calendarRecyclerView.adapter = calendarAdapter
     }
+
     private fun setupHourView() {
         hourRecyclerView = findViewById(R.id.hour_recycler_view)
         val layoutManager = LinearLayoutManager(this)
@@ -207,8 +362,60 @@ class TaskListActivity : AppCompatActivity() {
 
         val hours = listOf("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
             "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00")
-        hourAdapter = HourAdapter(hours)
-        hourRecyclerView.adapter = hourAdapter
+
+        CoroutineScope(Dispatchers.IO).launch {
+            val projectsList = projectDao.getAllProjects()
+            val projectsMap = projectsList.associateBy { it.id }
+            withContext(Dispatchers.Main) {
+                hourAdapter = HourAdapter(hours, object : HourAdapter.OnTaskLongClickListener {
+                    override fun onTaskLongClick(task: Task) {
+                        showTaskOptionsDialog(task)
+                    }
+                }, projectsMap)
+                hourRecyclerView.adapter = hourAdapter
+                loadTasksForSelectedDate()
+            }
+        }
     }
+    private fun showTaskOptionsDialog(task: Task) {
+        val options = arrayOf("Add to Existing Project", "Create New Project")
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Task Options")
+        builder.setItems(options) { dialog, which ->
+            when (which) {
+                0 -> showAddToProjectDialog(task)
+                1 -> showAddProjectDialog()
+            }
+        }
+        builder.show()
+    }
+
+    private fun showAddToProjectDialog(task: Task) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val projects = projectDao.getAllProjects()
+            withContext(Dispatchers.Main) {
+                val projectNames = projects.map { it.name }.toTypedArray()
+                val builder = AlertDialog.Builder(this@TaskListActivity)
+                builder.setTitle("Select Project")
+                builder.setItems(projectNames) { dialog, which ->
+                    val selectedProject = projects[which]
+                    addTaskToProject(task, selectedProject)
+                }
+                builder.show()
+            }
+        }
+    }
+
+    private fun addTaskToProject(task: Task, project: Project) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val updatedTask = task.copy(projectId = project.id)
+            taskDao.update(updatedTask)
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@TaskListActivity, "Task added to project", Toast.LENGTH_SHORT).show()
+                loadTasksForSelectedDate()
+            }
+        }
+    }
+
 }
 

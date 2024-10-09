@@ -45,12 +45,31 @@
             android:textStyle="bold" />
 
         <!-- Иконка добавления -->
+
+        <ImageView
+            android:id="@+id/addProjectIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/library_add"
+            app:tint="@color/dark_purple" />
+
+        <ImageView
+            android:id="@+id/datePickerIcon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+
+            android:src="@drawable/calendar_month"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/dark_purple" />
+
         <ImageView
             android:id="@+id/addIcon"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/add"
             app:tint="@color/dark_purple" />
+
     </LinearLayout>
 
     <!-- Календарь -->

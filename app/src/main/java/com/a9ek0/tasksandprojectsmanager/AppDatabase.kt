@@ -7,9 +7,10 @@ import androidx.room.RoomDatabase
 import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
-@Database(entities = [Task::class], version = 2) // Increment the version number
+@Database(entities = [Task::class, Project::class], version = 4)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun taskDao(): TaskDao
+    abstract fun projectDao(): ProjectDao
 
     companion object {
         @Volatile
@@ -22,58 +23,45 @@ abstract class AppDatabase : RoomDatabase() {
                     AppDatabase::class.java,
                     "task_database"
                 )
-                    .addMigrations(MIGRATION_1_2) // Add migration strategy if needed
+                    .addMigrations(MIGRATION_3_4)
                     .build()
                 INSTANCE = instance
                 instance
             }
         }
 
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                // Check if the 'time' column exists in the old 'tasks' table
-                val cursor = database.query("PRAGMA table_info(tasks)")
-                var timeColumnExists = false
-                while (cursor.moveToNext()) {
-                    val columnName = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                    if (columnName == "time") {
-                        timeColumnExists = true
-                        break
-                    }
-                }
-                cursor.close()
+                // Drop the old tables
+                database.execSQL("DROP TABLE IF EXISTS `tasks`")
+                database.execSQL("DROP TABLE IF EXISTS `projects`")
 
-                // If the 'time' column does not exist, add it to the old 'tasks' table
-                if (!timeColumnExists) {
-                    database.execSQL("ALTER TABLE `tasks` ADD COLUMN `time` TEXT NOT NULL DEFAULT ''")
-                }
-
-                // Create the new table with the correct schema
+                // Create the new `projects` table with the correct schema
                 database.execSQL("""
-            CREATE TABLE IF NOT EXISTS `tasks_new` (
-                `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-                `title` TEXT NOT NULL,
-                `description` TEXT NOT NULL,
-                `date` TEXT NOT NULL,
-                `time` TEXT NOT NULL
-            )
-        """.trimIndent())
+                    CREATE TABLE IF NOT EXISTS `projects` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `name` TEXT NOT NULL,
+                        `description` TEXT NOT NULL
+                    )
+                """.trimIndent())
 
-                // Copy the data from the old table to the new table
+                // Create the new `tasks` table with the correct schema
                 database.execSQL("""
-            INSERT INTO `tasks_new` (`id`, `title`, `description`, `date`, `time`)
-            SELECT `id`, `title`, `description`, `date`, `time`
-            FROM `tasks`
-        """.trimIndent())
-
-                // Remove the old table
-                database.execSQL("DROP TABLE `tasks`")
-
-                // Rename the new table to the old table name
-                database.execSQL("ALTER TABLE `tasks_new` RENAME TO `tasks`")
+                    CREATE TABLE IF NOT EXISTS `tasks` (
+                        `id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+                        `title` TEXT NOT NULL,
+                        `description` TEXT NOT NULL,
+                        `date` TEXT NOT NULL,
+                        `time` TEXT NOT NULL,
+                        `duration` INTEGER NOT NULL DEFAULT 1,
+                        `projectId` INTEGER,
+                        FOREIGN KEY(`projectId`) REFERENCES `projects`(`id`) ON DELETE CASCADE
+                    )
+                """.trimIndent())
             }
         }
     }
+
     fun clearDatabase() {
         INSTANCE?.clearAllTables()
     }

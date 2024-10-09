@@ -1,6 +1,7 @@
 package com.a9ek0.tasksandprojectsmanager
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
@@ -18,6 +19,9 @@ interface TaskDao {
 
     @Query("SELECT * FROM tasks WHERE strftime('%d-%m-%Y', date) = :date ORDER BY time")
     fun getTasksByFormattedDate(date: String): List<Task>
+
+    @Delete
+    suspend fun delete(task: Task)
 
     @Update
     suspend fun update(task: Task)

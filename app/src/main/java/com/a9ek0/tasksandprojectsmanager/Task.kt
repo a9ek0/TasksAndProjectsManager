@@ -20,5 +20,6 @@ data class Task(
     val date: String,
     val time: String,
     val duration: Int,
-    val projectId: Int? = null
+    val projectId: Int? = null,
+    val projectName: String
 )

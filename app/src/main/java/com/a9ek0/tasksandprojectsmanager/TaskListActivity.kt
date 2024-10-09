@@ -256,12 +256,17 @@ class TaskListActivity : AppCompatActivity() {
         descriptionInput.hint = "Description"
         layout.addView(descriptionInput)
 
+        val projectNameInput = EditText(this)
+        projectNameInput.hint = "Project Name"
+        layout.addView(projectNameInput)
+
         builder.setView(layout)
 
         builder.setPositiveButton("Add") { dialog, which ->
             val title = titleInput.text.toString()
             val description = descriptionInput.text.toString()
-            val task = Task(title = title, description = description, date = selectedDate, time = "", duration = 1)
+            val projectName = projectNameInput.text.toString()
+            val task = Task(title = title, description = description, date = selectedDate, time = "", duration = 1, projectName = projectName)
             selectHourForTask(task)
         }
         builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
@@ -377,17 +382,29 @@ class TaskListActivity : AppCompatActivity() {
             }
         }
     }
+
     private fun showTaskOptionsDialog(task: Task) {
-        val options = arrayOf("Add to Existing Project", "Create New Project")
+        val options = arrayOf("Add to Existing Project", "Create New Project", "Delete Task")
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Task Options")
         builder.setItems(options) { dialog, which ->
             when (which) {
                 0 -> showAddToProjectDialog(task)
                 1 -> showAddProjectDialog()
+                2 -> deleteTask(task)
             }
         }
         builder.show()
+    }
+
+    private fun deleteTask(task: Task) {
+        CoroutineScope(Dispatchers.IO).launch {
+            taskDao.delete(task)
+            withContext(Dispatchers.Main) {
+                Toast.makeText(this@TaskListActivity, "Task deleted", Toast.LENGTH_SHORT).show()
+                loadTasksForSelectedDate()
+            }
+        }
     }
 
     private fun showAddToProjectDialog(task: Task) {

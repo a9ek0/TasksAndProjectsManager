@@ -28,13 +28,7 @@ class HourAdapter(
     override fun onBindViewHolder(holder: HourViewHolder, position: Int) {
         val hour = hours[position]
         val tasks = tasksByHour[position] ?: emptyList()
-        holder.bind(hour, tasks, projects)
-        holder.itemView.setOnLongClickListener {
-            if (tasks.isNotEmpty()) {
-                onTaskLongClickListener.onTaskLongClick(tasks[0]) // Assuming you want to handle the first task
-            }
-            true
-        }
+        holder.bind(hour, tasks, projects, onTaskLongClickListener)
     }
 
     override fun getItemCount(): Int = hours.size
@@ -59,7 +53,7 @@ class HourAdapter(
         private val hourTextView: TextView = itemView.findViewById(R.id.hour_text)
         private val tasksContainer: LinearLayout = itemView.findViewById(R.id.tasks_container)
 
-        fun bind(hour: String, tasks: List<Task>, projects: Map<Int, Project>) {
+        fun bind(hour: String, tasks: List<Task>, projects: Map<Int, Project>, onTaskLongClickListener: HourAdapter.OnTaskLongClickListener) {
             hourTextView.text = hour
             tasksContainer.removeAllViews()
             tasks.forEach { task ->
@@ -70,6 +64,10 @@ class HourAdapter(
                 titleTextView.text = task.title
                 descriptionTextView.text = task.description
                 projectTextView.text = projects[task.projectId]?.name ?: "No Project"
+                taskView.setOnLongClickListener {
+                    onTaskLongClickListener.onTaskLongClick(task)
+                    true
+                }
                 tasksContainer.addView(taskView)
             }
         }

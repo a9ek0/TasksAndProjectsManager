@@ -256,17 +256,12 @@ class TaskListActivity : AppCompatActivity() {
         descriptionInput.hint = "Description"
         layout.addView(descriptionInput)
 
-        val projectNameInput = EditText(this)
-        projectNameInput.hint = "Project Name"
-        layout.addView(projectNameInput)
-
         builder.setView(layout)
 
         builder.setPositiveButton("Add") { dialog, which ->
             val title = titleInput.text.toString()
             val description = descriptionInput.text.toString()
-            val projectName = projectNameInput.text.toString()
-            val task = Task(title = title, description = description, date = selectedDate, time = "", duration = 1, projectName = projectName)
+            val task = Task(title = title, description = description, date = selectedDate, time = "", duration = 1, projectName = "")
             selectHourForTask(task)
         }
         builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
@@ -425,7 +420,7 @@ class TaskListActivity : AppCompatActivity() {
 
     private fun addTaskToProject(task: Task, project: Project) {
         CoroutineScope(Dispatchers.IO).launch {
-            val updatedTask = task.copy(projectId = project.id)
+            val updatedTask = task.copy(projectId = project.id, projectName = project.name)
             taskDao.update(updatedTask)
             withContext(Dispatchers.Main) {
                 Toast.makeText(this@TaskListActivity, "Task added to project", Toast.LENGTH_SHORT).show()

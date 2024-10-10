@@ -10,5 +10,5 @@ interface ProjectDao {
     fun getAllProjects(): List<Project>
 
     @Insert
-    fun insert(project: Project)
+    fun insert(project: Project): Long
 }

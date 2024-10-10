@@ -38,7 +38,7 @@ class TaskListActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (getSupportActionBar() != null) {
-            getSupportActionBar()?.hide();
+            getSupportActionBar()?.hide()
         }
         setContentView(R.layout.activity_task_list)
 
@@ -47,7 +47,7 @@ class TaskListActivity : AppCompatActivity() {
         projectDao = db.projectDao()
 
         setupCalendarView()
-        setupHourView()
+        setupHourView() 
 
         val today = Calendar.getInstance()
         selectedDate = "${today.get(Calendar.DAY_OF_MONTH)}-${today.get(Calendar.MONTH) + 1}-${today.get(Calendar.YEAR)}"
@@ -83,7 +83,7 @@ class TaskListActivity : AppCompatActivity() {
         }
     }
 
-    private fun showAddProjectDialog() {
+    private fun showAddProjectDialog(task: Task? = null) {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("Add Project")
 
@@ -104,23 +104,29 @@ class TaskListActivity : AppCompatActivity() {
             val name = nameInput.text.toString()
             val description = descriptionInput.text.toString()
             val project = Project(name = name, description = description)
-            addProjectToDatabase(project)
+            addProjectToDatabase(project, task)
         }
         builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
 
         builder.show()
     }
 
-    private fun addProjectToDatabase(project: Project) {
+    private fun addProjectToDatabase(project: Project, task: Task? = null) {
         CoroutineScope(Dispatchers.IO).launch {
-            projectDao.insert(project)
+            val projectId = projectDao.insert(project)
+            val projectsList = projectDao.getAllProjects()
+            val projectsMap = projectsList.associateBy { it.id }
             withContext(Dispatchers.Main) {
+                hourAdapter.updateProjects(projectsMap)
                 Toast.makeText(this@TaskListActivity, "Project added", Toast.LENGTH_SHORT).show()
+                task?.let {
+                    val updatedTask = it.copy(projectId = projectId.toInt(), projectName = project.name)
+                    taskDao.update(updatedTask)
+                    loadTasksForSelectedDate()
+                }
             }
         }
     }
-
-
 
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
@@ -219,8 +225,6 @@ class TaskListActivity : AppCompatActivity() {
             db.clearDatabase()
         }
     }
-
-
 
     private fun updateUI(tasks: List<Task>) {
         hourAdapter.setCurrentDate(selectedDate)
@@ -373,7 +377,7 @@ class TaskListActivity : AppCompatActivity() {
                     }
                 }, projectsMap)
                 hourRecyclerView.adapter = hourAdapter
-                loadTasksForSelectedDate()
+                loadTasksForSelectedDate() // Ensure hourAdapter is initialized before this call
             }
         }
     }
@@ -385,7 +389,7 @@ class TaskListActivity : AppCompatActivity() {
         builder.setItems(options) { dialog, which ->
             when (which) {
                 0 -> showAddToProjectDialog(task)
-                1 -> showAddProjectDialog()
+                1 -> showAddProjectDialog(task)
                 2 -> deleteTask(task)
             }
         }

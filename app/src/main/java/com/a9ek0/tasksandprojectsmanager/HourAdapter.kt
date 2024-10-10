@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 class HourAdapter(
     private val hours: List<String>,
     private val onTaskLongClickListener: OnTaskLongClickListener,
-    private val projects: Map<Int, Project> // Добавьте карту проектов
+    private var projects: Map<Int, Project> // Добавьте карту проектов
 ) : RecyclerView.Adapter<HourAdapter.HourViewHolder>() {
 
     interface OnTaskLongClickListener {
@@ -37,6 +37,11 @@ class HourAdapter(
         for (i in 0 until task.duration) {
             tasksByHour.getOrPut(hourIndex + i) { mutableListOf() }.add(task)
         }
+        notifyDataSetChanged()
+    }
+
+    fun updateProjects(newProjects: Map<Int, Project>) {
+        projects = newProjects
         notifyDataSetChanged()
     }
 

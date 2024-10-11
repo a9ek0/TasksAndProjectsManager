@@ -24,12 +24,23 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
     private lateinit var gestureDetector: GestureDetector
     private lateinit var auth: FirebaseAuth
 
+    companion object {
+        init {
+            System.loadLibrary("native-lib")
+        }
+    }
+
+    external fun stringFromJNI(): String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if (supportActionBar != null) {
             supportActionBar?.hide()
         }
         setContentView(R.layout.activity_main)
+
+        val textView: TextView = findViewById(R.id.sample_text)
+        textView.text = stringFromJNI()
 
         auth = FirebaseAuth.getInstance()
         val user = auth.currentUser

@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.4.1)
 
-add_library(native-lib SHARED native-lib.cpp)
+project(TasksAndProjectsManager)  # Add this line
+
+add_library(native-lib SHARED native-lib.cpp)  # Change .c to .cpp
 
 find_library(log-lib log)
 

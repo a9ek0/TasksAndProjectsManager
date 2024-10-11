@@ -1,10 +1,7 @@
 #include <jni.h>
-#include <string>
+#include <string.h>
 
 extern "C" JNIEXPORT jstring JNICALL
-Java_com_example_carpartsshop_ui_home_gifts_NativeLib_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
+Java_com_a9ek0_tasksandprojectsmanager_MainActivity_stringFromJNI(JNIEnv *env, jobject instance) {
+    return env->NewStringUTF("Hello from C");
 }

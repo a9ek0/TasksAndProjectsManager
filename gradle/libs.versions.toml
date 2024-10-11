@@ -12,6 +12,9 @@ lifecycleRuntimeKtx = "2.8.5"
 appcompat = "1.7.0"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
+firebaseCommonKtx = "21.0.0"
+firebaseAuthKtx = "23.0.0"
+firebaseFirestoreKtx = "25.1.0"
 
 
 [libraries]
@@ -26,6 +29,9 @@ androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecyc
 appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx", version.ref = "firebaseAuthKtx" }
+firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

@@ -10,6 +10,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -21,6 +22,7 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
     private lateinit var taskDao: TaskDao
     private lateinit var projectDao: ProjectDao
     private lateinit var gestureDetector: GestureDetector
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +30,18 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
             supportActionBar?.hide()
         }
         setContentView(R.layout.activity_main)
+
+        auth = FirebaseAuth.getInstance()
+        val user = auth.currentUser
+        if (user == null) {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+            return
+        }
+
+        val nameTextView: TextView = findViewById(R.id.name)
+        nameTextView.text = user.displayName ?: "User"
 
         gestureDetector = GestureDetector(this, this)
 

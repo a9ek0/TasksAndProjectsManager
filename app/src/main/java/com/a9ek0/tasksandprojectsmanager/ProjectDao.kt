@@ -9,6 +9,9 @@ interface ProjectDao {
     @Query("SELECT * FROM projects")
     fun getAllProjects(): List<Project>
 
+    @Query("SELECT COUNT(*) FROM projects")
+    suspend fun countAllProjects(): Int
+
     @Insert
     fun insert(project: Project): Long
 }

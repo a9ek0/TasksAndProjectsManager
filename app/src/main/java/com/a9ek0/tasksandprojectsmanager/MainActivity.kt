@@ -2,11 +2,13 @@ package com.a9ek0.tasksandprojectsmanager
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.CalendarContract
+import android.view.GestureDetector
+import android.view.MotionEvent
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.cardview.widget.CardView
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,16 +16,20 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
 
     private lateinit var taskDao: TaskDao
+    private lateinit var projectDao: ProjectDao
+    private lateinit var gestureDetector: GestureDetector
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if (getSupportActionBar() != null) {
-            getSupportActionBar()?.hide();
+        if (supportActionBar != null) {
+            supportActionBar?.hide()
         }
         setContentView(R.layout.activity_main)
+
+        gestureDetector = GestureDetector(this, this)
 
         val calendarIcon: ImageView = findViewById(R.id.calendar_icon)
         calendarIcon.setOnClickListener {
@@ -39,42 +45,130 @@ class MainActivity : AppCompatActivity() {
             finish()
         }
 
-
         taskDao = AppDatabase.getDatabase(this).taskDao()
-        val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+        projectDao = AppDatabase.getDatabase(this).projectDao()
+
+        val today = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
         val dateTextView: TextView = findViewById(R.id.date)
-        val currentDate = SimpleDateFormat("dd MMMM, yyyy", Locale.getDefault()).format(Date())
+        val currentDate = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
         dateTextView.text = currentDate
 
-        val tasksCountTextView: TextView = findViewById(R.id.tasks_count)
-        val tasksCount = getTasksCount()
-        tasksCountTextView.text = tasksCount.toString()
-
-        val progressBar: ProgressBar = findViewById(R.id.progress_bar)
-        val progressTextView: TextView = findViewById(R.id.progress_text)
-        val progressPercentage = calculateProgress(tasksCount, getCompletedTasksCount())
-        progressBar.progress = progressPercentage
-        progressTextView.text = "$progressPercentage%"
-
         lifecycleScope.launch {
-            val today = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
-            val count = withContext(Dispatchers.IO) {
+            val today = SimpleDateFormat("dd-MM-yyyy", Locale.getDefault()).format(Date())
+            val tasksCount = withContext(Dispatchers.IO) {
                 taskDao.countTasksByDate(today)
             }
+            val totalTasksCount = withContext(Dispatchers.IO) {
+                taskDao.countAllTasks()
+            }
+            val totalProjectsCount = withContext(Dispatchers.IO) {
+                projectDao.countAllProjects()
+            }
+            val completedTasksCount = withContext(Dispatchers.IO) {
+                taskDao.countCompletedTasks()
+            }
+
             val tasksCountTextView: TextView = findViewById(R.id.tasks_count)
-            tasksCountTextView.text = count.toString()
+            tasksCountTextView.text = tasksCount.toString()
+
+            val totalTasksCountTextView: TextView = findViewById(R.id.total_tasks_count)
+            totalTasksCountTextView.text = totalTasksCount.toString()
+
+            val totalProjectsCountTextView: TextView = findViewById(R.id.total_projects_count)
+            totalProjectsCountTextView.text = totalProjectsCount.toString()
+
+            val progressBar: ProgressBar = findViewById(R.id.progress_bar)
+            val progressTextView: TextView = findViewById(R.id.progress_text)
+            val progressPercentage = calculateProgress(totalTasksCount, completedTasksCount)
+            progressBar.progress = progressPercentage
+            progressTextView.text = "$progressPercentage%"
+
+            val tasksForToday = withContext(Dispatchers.IO) {
+                taskDao.getTasksByDate(today)
+            }
+            val allTasks = withContext(Dispatchers.IO) {
+                taskDao.getAllTasks()
+            }
+            val allProjects = withContext(Dispatchers.IO) {
+                projectDao.getAllProjects()
+            }
+            val completedTasks = withContext(Dispatchers.IO) {
+                taskDao.getCompletedTasks()
+            }
+
+            val tasksCard: CardView = findViewById(R.id.tasks_card)
+            val completedTasksCard: CardView = findViewById(R.id.completed_tasks_card)
+            val totalTasksCard: CardView = findViewById(R.id.total_tasks_card)
+            val totalProjectsCard: CardView = findViewById(R.id.total_projects_card)
+
+            tasksCard.setOnClickListener {
+                TaskListDialog(this@MainActivity, tasksForToday, "Tasks for Today").show()
+            }
+
+            completedTasksCard.setOnClickListener {
+                TaskListDialog(this@MainActivity, completedTasks, "Completed Tasks").show()
+            }
+
+            totalTasksCard.setOnClickListener {
+                TaskListDialog(this@MainActivity, allTasks, "All Tasks").show()
+            }
+
+            totalProjectsCard.setOnClickListener {
+                ProjectListDialog(this@MainActivity, allProjects, "All Projects").show()
+            }
         }
-    }
-
-    private fun getTasksCount(): Int {
-        return 5
-    }
-
-    private fun getCompletedTasksCount(): Int {
-        return 3 // Example value, replace with actual logic
     }
 
     private fun calculateProgress(totalTasks: Int, completedTasks: Int): Int {
         return if (totalTasks == 0) 0 else (completedTasks * 100) / totalTasks
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        if (event != null) {
+            gestureDetector.onTouchEvent(event)
+        }
+        return super.onTouchEvent(event)
+    }
+
+    override fun onDown(p0: MotionEvent): Boolean = true
+
+    override fun onShowPress(p0: MotionEvent) {}
+
+    override fun onSingleTapUp(p0: MotionEvent): Boolean = true
+
+    override fun onScroll(
+        e1: MotionEvent?,
+        p1: MotionEvent,
+        distanceX: Float,
+        distanceY: Float
+    ): Boolean = true
+
+    override fun onLongPress(p0: MotionEvent) {}
+
+    override fun onFling(
+        e1: MotionEvent?,
+        p1: MotionEvent,
+        velocityX: Float,
+        velocityY: Float
+    ): Boolean {
+        if (e1 != null && p1 != null) {
+            val deltaX = p1.x - e1.x
+            val deltaY = p1.y - e1.y
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) {
+                    // Swipe right
+                    val intent = Intent(this, TaskListActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                } else {
+                    // Swipe left
+                    val intent = Intent(this, ProfileActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+                return true
+            }
+        }
+        return false
     }
 }

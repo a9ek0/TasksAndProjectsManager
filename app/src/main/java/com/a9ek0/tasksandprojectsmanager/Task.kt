@@ -21,5 +21,6 @@ data class Task(
     val time: String,
     val duration: Int,
     val projectId: Int? = null,
-    val projectName: String
+    val projectName: String,
+    var completed: Boolean
 )

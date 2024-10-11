@@ -47,7 +47,7 @@ class TaskListActivity : AppCompatActivity() {
         projectDao = db.projectDao()
 
         setupCalendarView()
-        setupHourView() 
+        setupHourView()
 
         val today = Calendar.getInstance()
         selectedDate = "${today.get(Calendar.DAY_OF_MONTH)}-${today.get(Calendar.MONTH) + 1}-${today.get(Calendar.YEAR)}"
@@ -265,7 +265,7 @@ class TaskListActivity : AppCompatActivity() {
         builder.setPositiveButton("Add") { dialog, which ->
             val title = titleInput.text.toString()
             val description = descriptionInput.text.toString()
-            val task = Task(title = title, description = description, date = selectedDate, time = "", duration = 1, projectName = "")
+            val task = Task(title = title, description = description, date = selectedDate, time = "", duration = 1, projectName = "", completed = false)
             selectHourForTask(task)
         }
         builder.setNegativeButton("Cancel") { dialog, which -> dialog.cancel() }
@@ -359,6 +359,10 @@ class TaskListActivity : AppCompatActivity() {
         calendarRecyclerView.adapter = calendarAdapter
     }
 
+    fun onTaskUpdated() {
+        loadTasksForSelectedDate()
+    }
+
     private fun setupHourView() {
         hourRecyclerView = findViewById(R.id.hour_recycler_view)
         val layoutManager = LinearLayoutManager(this)
@@ -367,17 +371,20 @@ class TaskListActivity : AppCompatActivity() {
         val hours = listOf("00:00", "01:00", "02:00", "03:00", "04:00", "05:00", "06:00", "07:00", "08:00", "09:00", "10:00", "11:00",
             "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00")
 
+        hourAdapter = HourAdapter(hours, object : HourAdapter.OnTaskLongClickListener {
+            override fun onTaskLongClick(task: Task) {
+                showTaskOptionsDialog(task)
+            }
+        }, emptyMap())
+
+        hourRecyclerView.adapter = hourAdapter
+
         CoroutineScope(Dispatchers.IO).launch {
             val projectsList = projectDao.getAllProjects()
             val projectsMap = projectsList.associateBy { it.id }
             withContext(Dispatchers.Main) {
-                hourAdapter = HourAdapter(hours, object : HourAdapter.OnTaskLongClickListener {
-                    override fun onTaskLongClick(task: Task) {
-                        showTaskOptionsDialog(task)
-                    }
-                }, projectsMap)
-                hourRecyclerView.adapter = hourAdapter
-                loadTasksForSelectedDate() // Ensure hourAdapter is initialized before this call
+                hourAdapter.updateProjects(projectsMap)
+                loadTasksForSelectedDate()
             }
         }
     }
@@ -431,6 +438,10 @@ class TaskListActivity : AppCompatActivity() {
                 loadTasksForSelectedDate()
             }
         }
+    }
+
+    fun onTaskUpdated(task: Task) {
+        hourAdapter.notifyTaskChanged(task)
     }
 
 }

@@ -99,7 +99,15 @@ TaPM - это приложение для управления задачами 
 
 ![Alt-текст](/docs/mockups/calendar.png)
 
+![Alt-текст](/docs/mockups/calendar.png)
+
+![Alt-текст](/docs/mockups/calendar.png)
+
 ### 4.3 Диаграммы состояний
+
+![Alt-текст](/docs/mockups/calendar.png)
+
+![Alt-текст](/docs/mockups/calendar.png)
 
 ![Alt-текст](/docs/mockups/calendar.png)
 

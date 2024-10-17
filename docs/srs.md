@@ -247,5 +247,5 @@ TaPM - это приложение для управления задачами 
 
 ### 6.4 Диаграмма компонентов и развертывания
 
-![Alt-текст](/docs/component/component.png)
+![Alt-текст](/docs/component/component.jpg)
 

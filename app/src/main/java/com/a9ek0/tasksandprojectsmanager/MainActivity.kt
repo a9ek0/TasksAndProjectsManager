@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
         }
     }
 
-    external fun stringFromJNI(): String
+    external fun calculateProgressJNI(totalTasks: Int, completedTasks: Int): Int
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,9 +38,6 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
             supportActionBar?.hide()
         }
         setContentView(R.layout.activity_main)
-
-        val textView: TextView = findViewById(R.id.sample_text)
-        textView.text = stringFromJNI()
 
         auth = FirebaseAuth.getInstance()
         val user = auth.currentUser
@@ -145,7 +142,7 @@ class MainActivity : AppCompatActivity(), GestureDetector.OnGestureListener {
     }
 
     private fun calculateProgress(totalTasks: Int, completedTasks: Int): Int {
-        return if (totalTasks == 0) 0 else (completedTasks * 100) / totalTasks
+        return calculateProgressJNI(totalTasks, completedTasks)
     }
 
     override fun onTouchEvent(event: MotionEvent?): Boolean {
